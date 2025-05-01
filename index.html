@@ -1,177 +1,96 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InfoNova</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
       background: white;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 20px;
     }
     header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 30px;
-      padding: 10px;
-    }
-    header img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-    }
-    header h1 {
-      font-size: 2em;
-      color: #1f2937;
-      margin: 0;
       text-align: center;
+      margin-bottom: 20px;
     }
-    #chat-box {
-      width: 90%;
-      max-width: 700px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      margin: 20px 0;
-      padding: 15px;
-      height: 400px;
-      overflow-y: auto;
+    #logo {
+      height: 100px;
     }
-    .message {
+    #character {
       display: flex;
-      align-items: flex-start;
-      margin-bottom: 15px;
+      align-items: center;
+      margin-bottom: 20px;
     }
-    .message img {
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
+    #character img {
+      height: 60px;
       margin-right: 10px;
     }
-    .message p {
-      background: #eef1f5;
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 75%;
-    }
-    .user p {
-      background: #d1e7dd;
-      margin-left: auto;
-    }
-    #input-area {
+    #questionBox {
+      width: 100%;
+      max-width: 600px;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 90%;
-      max-width: 700px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-    #user-input {
+    #questionInput {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 10px 0 0 10px;
     }
-    #send-button {
-      padding: 12px 20px;
+    #askBtn {
+      padding: 10px 20px;
       font-size: 16px;
-      border: none;
-      background: #1f2937;
-      color: white;
-      border-radius: 0 10px 10px 0;
-      cursor: pointer;
     }
-    #send-button:hover {
-      background: #374151;
+    #response {
+      max-width: 600px;
+      text-align: center;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="istockphoto-1492548051-1024x1024.jpg" alt="Logo InfoNova" />
+    <img id="logo" src="logo.png" alt="Logo InfoNova">
     <h1>InfoNova</h1>
   </header>
-
-  <div id="chat-box">
-    <div class="message bot">
-      <img src="https://i.imgur.com/uXKZ9GL.png" alt="InfoNova" />
-      <p>Bienvenue ! Pose-moi une question sur n'importe quel sujet !</p>
-    </div>
+  <div id="character">
+    <img src="logo.png" alt="Personnage">
+    <p><strong>Pose-moi une question !</strong></p>
   </div>
-
-  <div id="input-area">
-    <input type="text" id="user-input" placeholder="Pose ta question ici..." />
-    <button id="send-button" onclick="handleQuestion()">Envoyer</button>
+  <div id="questionBox">
+    <input type="text" id="questionInput" placeholder="Tapez votre question ici...">
+    <button id="askBtn">Demander</button>
   </div>
+  <div id="response"></div>
 
   <script>
-    const qaData = {
-      "Quelle est la capitale du pays numéro 1 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 1 ?",
-      "Quelle est la capitale du pays numéro 2 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 2 ?",
-      "Quelle est la capitale du pays numéro 3 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 3 ?",
-      // (... ici continuer les 20 000 questions comme généré dans data20k_categorized.js ...)
-      "Quel est le résultat de 4000 + 4000 ?": "[Mathématiques] Ceci est la réponse à : Quel est le résultat de 4000 + 4000 ?"
+    const data = {
+      "Quelle est la capitale de la France ?": "Paris",
+      "Combien de planètes dans le système solaire ?": "8",
+      // Ici commence le bloc de 10 000 questions-réponses générées automatiquement
+      // Exemple pour la démonstration - les vraies données doivent être générées par lots
+      ...Object.fromEntries(Array.from({length: 10000}, (_, i) => [`Question #${i + 1}`, `Réponse #${i + 1}`]))
     };
-  </script>
 
-  <script>
+    const input = document.getElementById("questionInput");
+    const response = document.getElementById("response");
     const synth = window.speechSynthesis;
-    const voixFrMasculine = () => {
-      return [...synth.getVoices()].find(voice =>
-        voice.lang.startsWith('fr') && voice.name.toLowerCase().includes('homme')
-      ) || [...synth.getVoices()].find(voice => voice.lang.startsWith('fr'));
-    };
-    function normalize(text) {
-      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    }
-    function speak(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = voixFrMasculine();
+
+    document.getElementById("askBtn").addEventListener("click", () => {
+      const question = input.value.trim();
+      const answer = data[question] || "Désolé, je ne connais pas la réponse à cette question.";
+      response.textContent = answer;
+
+      const utterance = new SpeechSynthesisUtterance(answer);
       utterance.lang = "fr-FR";
       synth.speak(utterance);
-    }
-    function handleQuestion() {
-      const input = document.getElementById('user-input');
-      const question = input.value.trim();
-      if (!question) return;
-      const chatBox = document.getElementById('chat-box');
-      chatBox.innerHTML += `
-        <div class="message user">
-          <img src="https://i.imgur.com/1X6lC9h.png" alt="Utilisateur">
-          <p>${question}</p>
-        </div>
-      `;
-      const normQ = normalize(question);
-      let response = "Je ne connais pas encore cette réponse, désolé. 😕";
-      for (let q in qaData) {
-        if (normalize(q) === normQ) {
-          response = qaData[q];
-          break;
-        }
-      }
-      setTimeout(() => {
-        chatBox.innerHTML += `
-          <div class="message bot">
-            <img src="https://i.imgur.com/uXKZ9GL.png" alt="InfoNova" />
-            <p>${response}</p>
-          </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-        speak(response);
-      }, 300);
-      input.value = '';
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    window.speechSynthesis.onvoiceschanged = () => {};
+    });
   </script>
 </body>
 </html>
