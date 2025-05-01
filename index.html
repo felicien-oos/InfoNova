@@ -1,63 +1,163 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>InfoNova</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f8ff;
-      color: #333;
-      text-align: center;
-      padding: 40px;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    img {
-      width: 200px;
-      border-radius: 20px;
-      margin-bottom: 20px;
+    header {
+      background: #1f2937;
+      color: white;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
     }
-    .qa {
-      text-align: left;
+    header img {
+      height: 50px;
+      margin-right: 15px;
+      border-radius: 50%;
+    }
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+    #chat-box {
+      width: 90%;
       max-width: 700px;
-      margin: 20px auto;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      margin: 30px 0 20px 0;
       padding: 20px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      height: 400px;
+      overflow-y: auto;
     }
-    .question {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .answer {
+    .message {
+      display: flex;
+      align-items: flex-start;
       margin-bottom: 15px;
+    }
+    .message img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .message p {
+      background: #eef1f5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+    .user p {
+      background: #d1e7dd;
+      margin-left: auto;
+    }
+    #input-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 90%;
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+    #user-input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px 0 0 10px;
+    }
+    #send-button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      background: #1f2937;
+      color: white;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+    #send-button:hover {
+      background: #374151;
+    }
+    .bot {
+      align-items: center;
     }
   </style>
 </head>
 <body>
-
-  <img src="istockphoto-1492548051-1024x1024.jpg" alt="Logo InfoNova">
-
-  <h1>Bienvenue sur InfoNova</h1>
-
-  <audio controls autoplay>
-    <source src="voice.mp3" type="audio/mpeg">
-    Votre navigateur ne supporte pas l'audio.
-  </audio>
-
-  <div class="qa">
-    <div class="question">1. Quel est le plus grand océan du monde ?</div>
-    <div class="answer">L'océan Pacifique.</div>
-
-    <div class="question">2. Qui a peint La Joconde ?</div>
-    <div class="answer">Léonard de Vinci.</div>
-
-    <div class="question">3. Quelle est la capitale du Canada ?</div>
-    <div class="answer">Ottawa.</div>
-
-    <div class="question">4. Combien de planètes dans le système solaire ?</div>
-    <div class="answer">Huit planètes.</div>
+  <header>
+    <img src="istockphoto-1492548051-1024x1024.jpg" alt="Logo" />
+    <h1>InfoNova</h1>
+  </header>
+  <div id="chat-box">
+    <div class="message bot">
+      <img src="https://i.imgur.com/uXKZ9GL.png" alt="InfoNova" />
+      <p>Bonjour, je suis InfoNova ! Pose-moi une question.</p>
+    </div>
   </div>
-
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Pose ta question ici..." />
+    <button id="send-button" onclick="handleQuestion()">Envoyer</button>
+  </div>
+  <script src="data.js"></script>
+  <script>
+    const synth = window.speechSynthesis;
+    const voixFrMasculine = () => {
+      return [...synth.getVoices()].find(voice => 
+        voice.lang.startsWith('fr') && voice.name.toLowerCase().includes('homme')
+      ) || [...synth.getVoices()].find(voice => voice.lang.startsWith('fr'));
+    };
+    function normalize(text) {
+      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = voixFrMasculine();
+      utterance.lang = "fr-FR";
+      synth.speak(utterance);
+    }
+    function handleQuestion() {
+      const input = document.getElementById('user-input');
+      const question = input.value.trim();
+      if (!question) return;
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML += `
+        <div class="message user">
+          <img src="https://i.imgur.com/1X6lC9h.png" alt="Utilisateur">
+          <p>${question}</p>
+        </div>
+      `;
+      const normQ = normalize(question);
+      let response = "Je ne connais pas encore cette réponse, désolé. 😕";
+      for (let q in qaData) {
+        if (normalize(q) === normQ) {
+          response = qaData[q];
+          break;
+        }
+      }
+      setTimeout(() => {
+        chatBox.innerHTML += `
+          <div class="message bot">
+            <img src="https://i.imgur.com/uXKZ9GL.png" alt="InfoNova" />
+            <p>${response}</p>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        speak(response);
+      }, 300);
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
 </body>
 </html>
