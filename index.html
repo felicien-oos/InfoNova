@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>InfoNova</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -13,20 +14,21 @@
       align-items: center;
     }
     header {
-      background: #1f2937;
-      color: white;
-      width: 100%;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      padding: 10px 20px;
+      margin-top: 40px;
     }
     header img {
-      height: 50px;
-      margin-right: 15px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
     header h1 {
-      font-size: 24px;
+      font-size: 2.5em;
+      color: #1f2937;
       margin: 0;
     }
     #chat-box {
@@ -88,31 +90,40 @@
     #send-button:hover {
       background: #374151;
     }
-    .bot {
-      align-items: center;
-    }
   </style>
 </head>
 <body>
   <header>
-    <img src="istockphoto-1492548051-1024x1024.jpg" alt="Logo" />
+    <img src="istockphoto-1492548051-1024x1024.jpg" alt="Logo InfoNova" />
     <h1>InfoNova</h1>
   </header>
+
   <div id="chat-box">
     <div class="message bot">
       <img src="https://i.imgur.com/uXKZ9GL.png" alt="InfoNova" />
-      <p>Bonjour, je suis InfoNova ! Pose-moi une question.</p>
+      <p>Bienvenue ! Pose-moi une question sur n'importe quel sujet !</p>
     </div>
   </div>
+
   <div id="input-area">
     <input type="text" id="user-input" placeholder="Pose ta question ici..." />
     <button id="send-button" onclick="handleQuestion()">Envoyer</button>
   </div>
-  <script src="data.js"></script>
+
+  <script>
+    const qaData = {
+      "Quelle est la capitale de la France ?": "Paris",
+      "Combien de pattes a une araignée ?": "8",
+      "Qui a peint la Joconde ?": "Léonard de Vinci",
+      "Quelle est la planète la plus proche du Soleil ?": "Mercure"
+      // Tu peux continuer à ajouter ici jusqu'à 20 000
+    };
+  </script>
+
   <script>
     const synth = window.speechSynthesis;
     const voixFrMasculine = () => {
-      return [...synth.getVoices()].find(voice => 
+      return [...synth.getVoices()].find(voice =>
         voice.lang.startsWith('fr') && voice.name.toLowerCase().includes('homme')
       ) || [...synth.getVoices()].find(voice => voice.lang.startsWith('fr'));
     };
@@ -161,3 +172,5 @@
   </script>
 </body>
 </html>
+
+   
