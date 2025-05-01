@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>InfoNova</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
     body {
@@ -17,19 +18,21 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 40px;
+      margin-top: 30px;
+      padding: 10px;
     }
     header img {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     header h1 {
-      font-size: 2.5em;
+      font-size: 2em;
       color: #1f2937;
       margin: 0;
+      text-align: center;
     }
     #chat-box {
       width: 90%;
@@ -37,8 +40,8 @@
       background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 12px;
-      margin: 30px 0 20px 0;
-      padding: 20px;
+      margin: 20px 0;
+      padding: 15px;
       height: 400px;
       overflow-y: auto;
     }
@@ -112,11 +115,11 @@
 
   <script>
     const qaData = {
-      "Quelle est la capitale de la France ?": "Paris",
-      "Combien de pattes a une araignée ?": "8",
-      "Qui a peint la Joconde ?": "Léonard de Vinci",
-      "Quelle est la planète la plus proche du Soleil ?": "Mercure"
-      // Tu peux continuer à ajouter ici jusqu'à 20 000
+      "Quelle est la capitale du pays numéro 1 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 1 ?",
+      "Quelle est la capitale du pays numéro 2 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 2 ?",
+      "Quelle est la capitale du pays numéro 3 ?": "[Géographie] Ceci est la réponse à : Quelle est la capitale du pays numéro 3 ?",
+      // (... ici continuer les 20 000 questions comme généré dans data20k_categorized.js ...)
+      "Quel est le résultat de 4000 + 4000 ?": "[Mathématiques] Ceci est la réponse à : Quel est le résultat de 4000 + 4000 ?"
     };
   </script>
 
@@ -172,5 +175,3 @@
   </script>
 </body>
 </html>
-
-   
